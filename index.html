@@ -1,0 +1,108 @@
+<!-- ... existing code ... -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유랑단 미니게임 도우미 by akashiblue</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #121212; color: white; padding: 15px; margin: 0; }
+        
+        /* 캐릭터 짤과 제목 영역 (사진을 가로로 배치하고 크기 대폭 확대) */
+        .header-box { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 15px; margin: 15px auto; background: #1e1e1e; padding: 15px 20px; border-radius: 16px; border: 2px solid #333; max-width: 360px; }
+        
+        /* 200px 크기로 더 크게 확대 및 선명한 도트 픽셀 유지 */
+        .header-box img { 
+            width: 200px; 
+            height: 200px; 
+            object-fit: contain; 
+            image-rendering: pixelated; 
+            image-rendering: crisp-edges;
+            border-radius: 12px; 
+            border: 2px solid #00ffcc; 
+            background: #0d1117; 
+            padding: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .title-text { text-align: left; }
+        .title-text h3 { margin: 0 0 6px 0; font-size: 22px; color: #00ffcc; word-break: keep-all; line-height: 1.3; }
+        .title-text p { margin: 0; font-size: 14px; color: #ffeb3b; font-weight: bold; }
+
+        .pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 300px; margin: 0 auto; }
+        button.key-btn { padding: 22px; font-size: 26px; font-weight: bold; background: #333; color: #fff; border: 2px solid #555; border-radius: 12px; cursor: pointer; transition: background 0.1s; }
+        button.key-btn:active, button.key-btn.active { background: #00ffcc; color: #000; border-color: #00ffcc; }
+        .up { grid-column: 2; }
+        .left { grid-column: 1; grid-row: 2; }
+        .down { grid-column: 2; grid-row: 2; }
+        .right { grid-column: 3; grid-row: 2; }
+        
+        .action-row { display: flex; max-width: 300px; margin: 15px auto 0 auto; }
+        .btn-action { flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; }
+        .clear-btn { background: #e74c3c; color: white; }
+
+        #log { margin: 20px auto; max-width: 300px; background: #222; padding: 15px; border-radius: 8px; text-align: left; height: 180px; overflow-y: auto; font-family: monospace; font-size: 15px; color: #00ffcc; border: 1px solid #444; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <!-- 깃허브 저장소에 함께 올라가는 character.png 파일 -->
+        <img src="character.png" alt="캐릭터 사진">
+        <div class="title-text">
+            <h3>유랑단 미니게임 도우미</h3>
+            <p>by akashiblue</p>
+        </div>
+    </div>
+
+    <div class="pad">
+        <button id="btn-up" class="key-btn up" onclick="add('↑ (위)')">▲</button>
+        <button id="btn-left" class="key-btn left" onclick="add('← (왼쪽)')">◀</button>
+        <button id="btn-down" class="key-btn down" onclick="add('↓ (아래)')">▼</button>
+        <button id="btn-right" class="key-btn right" onclick="add('→ (오른쪽)')">▶</button>
+    </div>
+
+    <div class="action-row">
+        <button class="btn-action clear-btn" onclick="clearLog()">초기화 (Enter)</button>
+    </div>
+
+    <div id="log">기록 대기 중...<br>(키보드 방향키 사용 가능 / Enter 키를 누르면 초기화)</div>
+
+    <script>
+        let logs = [];
+        
+        function add(key) {
+            logs.push(key); 
+            let logBox = document.getElementById('log');
+            logBox.innerHTML = logs.map((item, index) => `${index + 1}. ${item}`).join('<br>');
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function clearLog() {
+            logs = [];
+            document.getElementById('log').innerHTML = '기록이 초기화되었습니다.<br>(키보드 방향키 사용 가능 / Enter 키를 누르면 초기화)';
+        }
+
+        // 키보드 방향키 및 Enter 키 감지
+        window.addEventListener('keydown', (e) => {
+            let btnId = '';
+            
+            if (e.key === 'ArrowUp') { add('↑ (위)'); btnId = 'btn-up'; }
+            else if (e.key === 'ArrowDown') { add('↓ (아래)'); btnId = 'btn-down'; }
+            else if (e.key === 'ArrowLeft') { add('← (왼쪽)'); btnId = 'btn-left'; }
+            else if (e.key === 'ArrowRight') { add('→ (오른쪽)'); btnId = 'btn-right'; }
+            else if (e.key === 'Enter') { 
+                e.preventDefault(); 
+                clearLog(); 
+                return; 
+            }
+
+            if (btnId) {
+                e.preventDefault();
+                let btn = document.getElementById(btnId);
+                btn.classList.add('active');
+                setTimeout(() => btn.classList.remove('active'), 150);
+            }
+        });
+    </script>
+</body>
+</html>
